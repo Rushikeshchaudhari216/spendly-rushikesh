@@ -40,8 +40,12 @@ CATEGORIES = [
 ]
 
 with app.app_context():
-    init_db()
-    seed_db()
+    try:
+        init_db()
+        seed_db()
+    except Exception as e:
+        print(f"Database initialization error: {e}", flush=True)
+        raise
 
 
 def _parse_date(val):
@@ -63,6 +67,11 @@ def _months_ago(today, n):
 # ------------------------------------------------------------------ #
 # Routes                                                              #
 # ------------------------------------------------------------------ #
+
+
+@app.route("/health")
+def health():
+    return {"status": "ok"}, 200
 
 
 @app.route("/")
@@ -313,4 +322,4 @@ def delete_expense(id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(host='0.0.0.0', debug=False, port=5001)
